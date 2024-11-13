@@ -456,7 +456,14 @@ impl<T: 'static> EventLoop<T> {
                                     logical_key: keycodes::to_logical(key_char, keycode),
                                     location: keycodes::to_location(keycode),
                                     repeat: key.repeat_count() > 0,
-                                    text: None,
+                                    text: if let Some(
+                                        android_activity::input::KeyMapChar::Unicode(c),
+                                    ) = key_char
+                                    {
+                                        Some(std::iter::once(c).collect::<smol_str::SmolStr>())
+                                    } else {
+                                        None
+                                    },
                                     platform_specific: KeyEventExtra {},
                                 },
                                 is_synthetic: false,
